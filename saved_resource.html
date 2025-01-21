@@ -1,0 +1,164 @@
+
+<!-- saved from url=(0262)https://911488036-atari-embeds.googleusercontent.com/embeds/16cb204cf3a9d4d223a0a3fd8b0eec5d/inner-frame-minified.html?jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.zh_TW.9odfnpLCH7U.O%2Fd%3D1%2Frs%3DAHpOoo_sGC6J0ApilQ0u6CItjwmsimfBJA%2Fm%3D__features__ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!--<base target="_blank">--><base href="." target="_blank">
+
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0a192f;
+            color: #ccd6f6;
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #chat-header {
+            background-color: #112240;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #64ffda;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #112240;
+            text-align: right;
+        }
+
+        .bot-message {
+            background-color: #172a45;
+        }
+
+        #chat-input-container {
+            display: flex;
+            border-top: 2px solid #64ffda;
+            background-color: #112240;
+            padding: 0.5rem;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #0a192f;
+            color: #ccd6f6;
+            font-size: 1rem;
+        }
+
+        #send-button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #64ffda;
+            color: #0a192f;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #send-button:hover {
+            background-color: #52d8b7;
+        }
+
+        #send-button:active {
+            background-color: #3fb297;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-header">AI Chatbot</div>
+        <div id="chat-messages">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Type your message here...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+
+        async function fetchGPT4Response(prompt) {
+            const apiKey = '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'; // Replace with your GPT-4 API key
+            const apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4',
+                    messages: [
+                        { role: 'system', content: 'You are a helpful AI assistant.' },
+                        { role: 'user', content: prompt }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch GPT-4 response');
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        sendButton.addEventListener('click', async () => {
+            const userMessage = chatInput.value.trim();
+            if (userMessage) {
+                displayMessage(userMessage, 'user');
+                chatInput.value = '';
+
+                try {
+                    const botResponse = await fetchGPT4Response(userMessage);
+                    displayMessage(botResponse, 'bot');
+                } catch (error) {
+                    displayMessage('Error: Unable to connect to the AI service.', 'bot');
+                    console.error(error);
+                }
+            }
+        });
+
+        function displayMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to the latest message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+
+
+</body></html>
